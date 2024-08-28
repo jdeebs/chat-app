@@ -19,6 +19,9 @@ const Start = ({ navigation }) => {
   // State for changes to chosen background color
   const [background, setBackground] = useState("");
 
+  // Set the title of the screen to "Home"
+  navigation.setOptions({ title: `Home` });
+
   return (
     // KeyboardAvoidingView component to handle responsive keyboard behavior on iOS and Android
     <KeyboardAvoidingView
@@ -34,7 +37,7 @@ const Start = ({ navigation }) => {
         {/* Render the title */}
         <Text style={styles.title}>Chat App</Text>
 
-        {/* Render the Start screen components */}
+        {/* Render the home screen components */}
         <View style={styles.innerContainer}>
           <TextInput
             style={styles.textInput}
