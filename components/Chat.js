@@ -12,7 +12,7 @@ const Chat = ({ route, navigation }) => {
   // Render component with dynamic background color passed from Start.js
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
-      <Text>Hello {name}!</Text>
+      <Text style={styles.text}>Hello {name}!</Text>
     </View>
   );
 };
@@ -23,6 +23,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  text: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#FFF",
+  }
 });
 
 export default Chat;

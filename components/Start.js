@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   TextInput,
   ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 
 // Import the local image
@@ -18,79 +20,89 @@ const Start = ({ navigation }) => {
   const [background, setBackground] = useState("");
 
   return (
-    // Render the background image
-    <ImageBackground
-      source={backgroundImage}
-      resizeMode="cover"
-      style={styles.backgroundImage}
+    // KeyboardAvoidingView component to handle responsive keyboard behavior on iOS and Android
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
     >
-      {/* Render the title */}
-      <Text style={styles.title}>Chat App</Text>
+      {/* Render the background image */}
+      <ImageBackground
+        source={backgroundImage}
+        resizeMode="cover"
+        style={styles.backgroundImage}
+      >
+        {/* Render the title */}
+        <Text style={styles.title}>Chat App</Text>
 
-      {/* Render the Start screen components */}
-      <View style={styles.container}>
-        <TextInput
-          style={styles.textInput}
-          value={name}
-          onChangeText={setName}
-          placeholder="Your Name"
-        ></TextInput>
+        {/* Render the Start screen components */}
+        <View style={styles.innerContainer}>
+          <TextInput
+            style={styles.textInput}
+            value={name}
+            onChangeText={setName}
+            placeholder="Your Name"
+          ></TextInput>
 
-        {/* Render the Choose Background Color box */}
-        <View style={styles.chooseColorBox}>
-          <Text style={styles.chooseColorText}>Choose Background Color:</Text>
-          <View style={styles.colorButtonsContainer}>
-
-            {/* Render the Background Color buttons for each color */}
-            <TouchableOpacity
-              accessible={true}
-              accessibilityLabel="More options"
-              accessibilityHint="Lets you choose to send an image or your geolocation."
-              accessibilityRole="button"
-              style={[
-                styles.chooseColor,
-                { backgroundColor: "#090C08" },
-                background === "#090C08" && styles.selectedColor,
-              ]}
-              // Set the function to handle button press
-              onPress={() => setBackground("#090C08")}
-            ></TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.chooseColor,
-                { backgroundColor: "#474056" },
-                background === "#474056" && styles.selectedColor,
-              ]}
-              onPress={() => setBackground("#474056")}
-            ></TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.chooseColor,
-                { backgroundColor: "#8A95A5" },
-                background === "#8A95A5" && styles.selectedColor,
-              ]}
-              onPress={() => setBackground("#8A95A5")}
-            ></TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.chooseColor,
-                { backgroundColor: "#B9C6AE" },
-                background === "#B9C6AE" && styles.selectedColor,
-              ]}
-              onPress={() => setBackground("#B9C6AE")}
-            ></TouchableOpacity>
+          {/* Render the Choose Background Color box */}
+          <View style={styles.chooseColorBox}>
+            <Text style={styles.chooseColorText}>Choose Background Color:</Text>
+            <View style={styles.colorButtonsContainer}>
+              {/* Render the Background Color buttons for each color */}
+              <TouchableOpacity
+                accessible={true}
+                accessibilityLabel="More options"
+                accessibilityHint="Lets you choose to send an image or your geolocation."
+                accessibilityRole="button"
+                style={[
+                  styles.chooseColor,
+                  { backgroundColor: "#090C08" },
+                  background === "#090C08" && styles.selectedColor,
+                ]}
+                // Set the function to handle button press
+                onPress={() => setBackground("#090C08")}
+              ></TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.chooseColor,
+                  { backgroundColor: "#474056" },
+                  background === "#474056" && styles.selectedColor,
+                ]}
+                onPress={() => setBackground("#474056")}
+              ></TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.chooseColor,
+                  { backgroundColor: "#8A95A5" },
+                  background === "#8A95A5" && styles.selectedColor,
+                ]}
+                onPress={() => setBackground("#8A95A5")}
+              ></TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.chooseColor,
+                  { backgroundColor: "#B9C6AE" },
+                  background === "#B9C6AE" && styles.selectedColor,
+                ]}
+                onPress={() => setBackground("#B9C6AE")}
+              ></TouchableOpacity>
+            </View>
           </View>
-        </View>
 
-        {/* Render the Start Chatting button and pass the name and background values in navigation call */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("Chat Screen", { name: name, background: background })}
-        >
-          <Text style={styles.buttonText}>Start Chatting</Text>
-        </TouchableOpacity>
-      </View>
-    </ImageBackground>
+          {/* Render the Start Chatting button and pass the name and background values in navigation call */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() =>
+              navigation.navigate("Chat Screen", {
+                name: name,
+                background: background,
+              })
+            }
+          >
+            <Text style={styles.buttonText}>Start Chatting</Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -100,6 +112,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  container: {
+    flex: 1,
+  },
   title: {
     flex: 1,
     justifyContent: "center",
@@ -108,7 +123,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#FFF",
   },
-  container: {
+  innerContainer: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "space-evenly",
     marginBottom: 30,
@@ -157,16 +173,13 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    border: 3,
     marginRight: 15,
-    borderColor: "white",
   },
   selectedColor: {
-    borderColor: "#ffd700",
+    borderColor: "#FCD95B",
     borderWidth: 3,
   },
   chooseColorText: {
-    flex: 1,
     fontSize: 16,
     fontWeight: "300",
     color: "#757083",
