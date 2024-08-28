@@ -12,8 +12,9 @@ import {
   Keyboard,
 } from "react-native";
 
-// Import the local image
+// Import the local image and icon
 const backgroundImage = require("../assets/background-image.png");
+const icon = require("../assets/icon.svg");
 
 const Start = ({ navigation }) => {
   // State for changes to name input value
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
     color: "#757083",
     borderWidth: 1,
     borderColor: "#757083",
-    opacity: 0.5,
+    opacity: 0.7,
   },
   button: {
     width: "88%",
