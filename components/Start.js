@@ -180,18 +180,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   colorButtonsContainer: {
+    width: 30,
+    height: 30,
     flexDirection: "row",
     justifyContent: "space-between",
     alignSelf: "flex-start",
   },
   chooseColor: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 40, // Default for non-selected colors
+    height: 40, // Default for non-selected colors
+    borderRadius: 20,
     marginRight: 15,
   },
   selectedColor: {
-    borderWidth: 3,
+    borderWidth: 2,
     borderColor: "#FCD95B",
   },
   chooseColorText: {
