@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -14,7 +14,6 @@ import {
 
 // Import the local image and icon
 const backgroundImage = require("../assets/background-image.png");
-const icon = require("../assets/icon.svg");
 
 const Start = ({ navigation }) => {
   // State for changes to name input value
@@ -22,8 +21,11 @@ const Start = ({ navigation }) => {
   // State for changes to chosen background color
   const [background, setBackground] = useState("");
 
-  // Set the title of the screen to "Home"
-  navigation.setOptions({ title: `Home` });
+  // Set the title of the screen to "Home" only after the component mounts
+  useEffect(() => {
+    navigation.setOptions({ title: `Home` });
+  }, [navigation]);
+  
 
   return (
     // KeyboardAvoidingView component to handle responsive keyboard behavior on iOS and Android
@@ -107,6 +109,7 @@ const Start = ({ navigation }) => {
             <TouchableOpacity
               style={styles.button}
               onPress={() =>
+                // The navigation that was defined in App.js
                 navigation.navigate("Chat Screen", {
                   name: name,
                   background: background,
