@@ -107,13 +107,13 @@ const Start = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   backgroundImage: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  container: {
-    flex: 1,
   },
   title: {
     flex: 1,
@@ -125,32 +125,29 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "space-evenly",
-    marginBottom: 30,
     width: "88%",
     height: "44%",
+    marginBottom: 30,
+    justifyContent: "space-evenly",
+    alignItems: "center",
     backgroundColor: "#FFF",
   },
   textInput: {
     width: "88%",
     padding: 15,
-    borderWidth: 1,
     fontSize: 16,
     fontWeight: "300",
-    fontColor: "#757083",
+    color: "#757083",
+    borderWidth: 1,
     borderColor: "#757083",
     opacity: 0.5,
   },
   button: {
-    justifyContent: "center",
-    alignItems: "center",
     width: "88%",
     height: "20%",
     padding: 10,
-    fontSize: 16,
-    fontWeight: "300",
-    fontColor: "#FFF",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#757083",
   },
   buttonText: {
@@ -166,8 +163,8 @@ const styles = StyleSheet.create({
   },
   colorButtonsContainer: {
     flexDirection: "row",
-    alignSelf: "flex-start",
     justifyContent: "space-between",
+    alignSelf: "flex-start",
   },
   chooseColor: {
     width: 30,
@@ -176,8 +173,8 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   selectedColor: {
-    borderColor: "#FCD95B",
     borderWidth: 3,
+    borderColor: "#FCD95B",
   },
   chooseColorText: {
     fontSize: 16,
