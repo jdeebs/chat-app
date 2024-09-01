@@ -15,7 +15,7 @@ export default function App() {
       {/* Define the navigation stack */}
       <Stack.Navigator initialRouteName="Screen1">
         <Stack.Screen name="Start Screen" component={Start} />
-         {/* Make sure this name matches the one used in navigation.navigate (the Start Chatting button) */}
+         {/* Ensure this name matches the one used in navigation.navigate (the Start Chatting button) */}
         <Stack.Screen name="Chat Screen" component={Chat} />
       </Stack.Navigator>
     </NavigationContainer>

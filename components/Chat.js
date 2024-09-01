@@ -1,21 +1,46 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
-import { GiftedChat } from "react-native-gifted-chat";
+import { Bubble, GiftedChat } from "react-native-gifted-chat";
 
 const Chat = ({ route, navigation }) => {
   const { name, background } = route.params;
   const [messages, setMessages] = useState([]);
 
+  // Callback function to append new messages to the GiftedChat component using the messages state
   const onSend = (newMessages) => {
-    setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages))
-  }
+    setMessages((previousMessages) =>
+      GiftedChat.append(previousMessages, newMessages)
+    );
+  };
+
+  const renderBubble = (props) => {
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: {
+            backgroundColor: "#000",
+          },
+          left: {
+            backgroundColor: "#FFF",
+          },
+        }}
+      />
+    );
+  };
 
   // Set the messages state with a static message
   useEffect(() => {
+    const systemMessage =
+      name && name.trim() !== ""
+        ? `${name} joined the chat`
+        : "A new user joined the chat";
+
     setMessages([
       {
         _id: 1,
-        text: `Hello ${name}`,
+        // If no name, use "there" as a placeholder
+        text: `Hello ${name || "there"}`,
         createdAt: new Date(),
         user: {
           _id: 2,
@@ -25,7 +50,7 @@ const Chat = ({ route, navigation }) => {
       },
       {
         _id: 2,
-        text: 'This is a system message',
+        text: systemMessage,
         createdAt: new Date(),
         system: true,
       },
@@ -46,14 +71,15 @@ const Chat = ({ route, navigation }) => {
     <View style={[styles.container, { backgroundColor: background }]}>
       <GiftedChat
         messages={messages}
+        renderBubble={renderBubble}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: 1,
         }}
-        style={{ flex: 1}}
+        style={{ flex: 1 }}
       />
-      {Platform.OS === "android" ? (
-        <KeyboardAvoidingView behavior="height" />
+      {Platform.OS === "android" || Platform.OS === "ios" ? (
+        <KeyboardAvoidingView behavior="height" style={styles.iosKeyboard} />
       ) : null}
     </View>
   );
@@ -62,6 +88,10 @@ const Chat = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  iosKeyboard: {
+    // Conditional padding for iOS
+    paddingBottom: Platform.OS === "ios" ? 34 : 0,
   },
 });
 
