@@ -32,7 +32,10 @@ export default function App() {
       <Stack.Navigator initialRouteName="Screen1">
         <Stack.Screen name="Start Screen" component={Start} />
          {/* Ensure this name matches the one used in navigation.navigate (the Start Chatting button) */}
-        <Stack.Screen name="Chat Screen" component={Chat} />
+        <Stack.Screen name="Chat Screen">
+        {/* Functional component renders the Chat component, passing the Firestore database reference as a prop */}
+        {(props) => <Chat db={db} {...props} />}
+        </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );

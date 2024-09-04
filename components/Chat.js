@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
 import { Bubble, GiftedChat } from "react-native-gifted-chat";
+import { collection, addDoc, doc, onSnapshot } from "firebase/firestore";
 
-const Chat = ({ route, navigation }) => {
+const Chat = ({ db, route, navigation }) => {
   const { name, background } = route.params;
   const [messages, setMessages] = useState([]);
 
