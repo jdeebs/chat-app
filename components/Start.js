@@ -11,6 +11,7 @@ import {
   Pressable,
   Keyboard,
 } from "react-native";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 // Import the local image and icon
 const backgroundImage = require("../assets/background-image.png");
@@ -21,11 +22,31 @@ const Start = ({ navigation }) => {
   // State for changes to chosen background color
   const [background, setBackground] = useState("");
 
+  // Initialize Firebase authentication handler
+  const auth = getAuth();
+
+  // Pass function to onPress of start button
+  const signInUser = () => {
+    // Passes auth user info
+    signInAnonymously(auth)
+      // result is a returned information object, includes temporary user account info
+      .then((result) => {
+        navigation.navigate("Chat Screen", {
+          userID: result.user.uid,
+          name: name,
+          background: background,
+        });
+        Alert.alert("Signed in Successfully!");
+      })
+      .catch((error) => {
+        Alert.alert("Unable to sign in, please try again.");
+      });
+  };
+
   // Set the title of the screen to "Home" only after the component mounts
   useEffect(() => {
     navigation.setOptions({ title: `Home` });
   }, [navigation]);
-  
 
   return (
     // KeyboardAvoidingView component to handle responsive keyboard behavior on iOS and Android
@@ -36,7 +57,7 @@ const Start = ({ navigation }) => {
       {/* Dismiss keyboard when touching outside input */}
       <Pressable
         style={styles.pressable}
-        onPress={Keyboard.dismiss} 
+        onPress={Keyboard.dismiss}
         // Ensure Pressable does not interfere with other components' touch events
         hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
       >
@@ -105,17 +126,8 @@ const Start = ({ navigation }) => {
               </View>
             </View>
 
-            {/* Render the Start Chatting button and pass the name and background values in navigation call */}
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() =>
-                // The navigation that was defined in App.js
-                navigation.navigate("Chat Screen", {
-                  name: name,
-                  background: background,
-                })
-              }
-            >
+            {/* Render the Start Chatting button and run the signInUser function on press */}
+            <TouchableOpacity style={styles.button} onPress={signInUser}>
               <Text style={styles.buttonText}>Start Chatting</Text>
             </TouchableOpacity>
           </View>
