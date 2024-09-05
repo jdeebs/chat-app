@@ -35,28 +35,24 @@ const Chat = ({ db, route, navigation }) => {
     );
   };
 
-  // Set the messages state with a static message
   useEffect(() => {
-    const systemMessage =
-      name && name.trim() !== ""
-        ? `${name} joined the chat`
-        : "A new user joined the chat";
-
     // Define query to get messages from Firestore
     const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
 
-    // Real-time query listener, When data changes, automatically retrieve updated snapshot of message documents
+    // Real-time query listener,
+    // When data changes, automatically retrieve updated snapshot of message documents
     const unsubMessages = onSnapshot(q, (snapshot) => {
       let newMessages = [];
-      // Iterate through each message document in the snapshot and create a new object with the message data
+      // Iterate through each message document in the snapshot
       snapshot.forEach((doc) => {
+        // Create new object with the message data and add it to the newMessages array
         newMessages.push({
           _id: doc.id,
           ...doc.data(),
           createdAt: new Date(doc.data().createdAt.toMillis()),
         });
       });
-      // Update the messages state with the latest messages
+      // Update messages with Firestore messages
       setMessages(newMessages);
     });
 
@@ -66,14 +62,14 @@ const Chat = ({ db, route, navigation }) => {
     };
   }, []);
 
-  // Set the title of the screen to the user's name or "Chat" if no name is provided
   useEffect(() => {
+    // Set the title of the screen to the user's name or "Chat" if no name is provided
     if (name && name.trim() !== "") {
       navigation.setOptions({ title: `${name}'s Chat` });
     } else {
       navigation.setOptions({ title: "Chat" });
     }
-  }, [name, navigation]);
+  }, [name, navigation]); // Update when name or nav changes
 
   // Render component with dynamic background color passed from Start.js
   return (
