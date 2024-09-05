@@ -10,6 +10,7 @@ import {
   Platform,
   Pressable,
   Keyboard,
+  Alert,
 } from "react-native";
 import { getAuth, signInAnonymously } from "firebase/auth";
 

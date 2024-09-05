@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
 import { Bubble, GiftedChat } from "react-native-gifted-chat";
-import { collection, addDoc, doc, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
 
 const Chat = ({ db, route, navigation }) => {
-  const { name, background } = route.params;
+  // Extract userID, name, and background props from the route
+  const { userID, name, background } = route.params;
   const [messages, setMessages] = useState([]);
 
   // Callback function to append new messages to the GiftedChat component using the messages state
   const onSend = (newMessages) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessages)
-    );
+    addDoc(collection(db, "messages"), newMessages[0]);
   };
 
   const renderBubble = (props) => {
@@ -37,25 +42,28 @@ const Chat = ({ db, route, navigation }) => {
         ? `${name} joined the chat`
         : "A new user joined the chat";
 
-    setMessages([
-      {
-        _id: 1,
-        // If no name, use "there" as a placeholder
-        text: `Hello ${name || "there"}`,
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: "React Native",
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      },
-      {
-        _id: 2,
-        text: systemMessage,
-        createdAt: new Date(),
-        system: true,
-      },
-    ]);
+    // Define query to get messages from Firestore
+    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+
+    // Real-time query listener, When data changes, automatically retrieve updated snapshot of message documents
+    const unsubMessages = onSnapshot(q, (snapshot) => {
+      let newMessages = [];
+      // Iterate through each message document in the snapshot and create a new object with the message data
+      snapshot.forEach((doc) => {
+        newMessages.push({
+          _id: doc.id,
+          ...doc.data(),
+          createdAt: new Date(doc.data().createdAt.toMillis()),
+        });
+      });
+      // Update the messages state with the latest messages
+      setMessages(newMessages);
+    });
+
+    // Clean up the listener
+    return () => {
+      if (unsubMessages) unsubMessages();
+    };
   }, []);
 
   // Set the title of the screen to the user's name or "Chat" if no name is provided
@@ -75,9 +83,9 @@ const Chat = ({ db, route, navigation }) => {
         renderBubble={renderBubble}
         onSend={(messages) => onSend(messages)}
         user={{
-          _id: 1,
+          _id: userID,
+          name: name,
         }}
-        style={{ flex: 1 }}
       />
       {Platform.OS === "android" || Platform.OS === "ios" ? (
         <KeyboardAvoidingView behavior="height" style={styles.iosKeyboard} />
