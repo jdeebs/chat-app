@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
 
 // Gifted Chat Components
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 
 // Firebase Firestore Modules
 import {
@@ -25,6 +25,12 @@ const Chat = ({ db, route, navigation }) => {
   // Function to append new messages to the GiftedChat component using the messages state
   const onSend = (newMessages) => {
     addDoc(collection(db, "messages"), newMessages[0]);
+  };
+
+  // Function to conditionally render the input toolbar based on network connectivity
+  const renderInputToolbar = (props) => {
+    if (isConnected) return <InputToolbar {...props} />;
+    else return null;
   };
 
   // Custom rendering for message bubbles
@@ -117,6 +123,7 @@ const Chat = ({ db, route, navigation }) => {
       <GiftedChat
         messages={messages}
         renderBubble={renderBubble}
+        renderInputToolbar={renderInputToolbar}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: userID,
