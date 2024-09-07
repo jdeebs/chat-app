@@ -5,6 +5,9 @@ import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+// Network Information Hook
+import { useNetInfo } from "@react-native-community/netinfo";
+
 // Firebase Core & Firestore Modules
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
@@ -23,23 +26,41 @@ export default function App() {
     projectId: "chat-app-fd428",
     storageBucket: "chat-app-fd428.appspot.com",
     messagingSenderId: "98351051865",
-    appId: "1:98351051865:web:c5ade7ed8de1398dde2d48"
+    appId: "1:98351051865:web:c5ade7ed8de1398dde2d48",
   };
 
   // Initialize Firebase, Cloud Firestore and get a reference to the database
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  // Define new state for network connectivity status
+  const connectionStatus = useNetInfo();
+
+  // Alert if connection is lost and disable Firestore db reconnect attempts until connection is re-established
+  useEffect(() => {
+    if (connectionStatus.isConnected === false) {
+      Alert.alert("Connection lost!");
+      disableNetwork(db);
+    } else if (connectionStatus.isConnected === true) {
+      enableNetwork(db);
+    }
+  }, [connectionStatus.isConnected]);
+
   return (
     <NavigationContainer>
-      
       {/* Define the navigation stack */}
       <Stack.Navigator initialRouteName="Screen1">
         <Stack.Screen name="Start Screen" component={Start} />
-         {/* Ensure this name matches the one used in navigation.navigate (the Start Chatting button) */}
+        {/* Ensure this name matches the one used in navigation.navigate (the Start Chatting button) */}
         <Stack.Screen name="Chat Screen">
-        {/* Functional component renders the Chat component, passing the Firestore database reference as a prop */}
-        {(props) => <Chat db={db} {...props} />}
+          {/* Functional component renders the Chat component, passing the Firestore database reference as a prop */}
+          {(props) => (
+            <Chat
+              isConnected={connectionStatus.isConnected}
+              db={db}
+              {...props}
+            />
+          )}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
