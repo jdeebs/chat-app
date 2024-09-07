@@ -6,7 +6,16 @@ import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 
 // Firebase Firestore Modules
-import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
+
+// Async Storage for Data Caching
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Chat = ({ db, route, navigation }) => {
   // Extract userID, name, and background props from the route
@@ -36,31 +45,61 @@ const Chat = ({ db, route, navigation }) => {
   };
 
   // Effect to listen to real-time updates from Firestore
+  let unsubMessages;
   useEffect(() => {
-    // Define query to get messages from Firestore
-    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+    if (isConnected === true) {
+      if (unsubMessages) unsubMessages();
+      unsubMessages = null;
 
-    // When data changes, automatically retrieve updated snapshot of message documents
-    const unsubMessages = onSnapshot(q, (snapshot) => {
-      let newMessages = [];
-      // Iterate through each message document in the snapshot
-      snapshot.forEach((doc) => {
-        // Create new object with the message data and add it to the newMessages array
-        newMessages.push({
-          _id: doc.id,
-          ...doc.data(),
-          createdAt: new Date(doc.data().createdAt.toMillis()),
+      // Define query to get messages from Firestore
+      const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+      where("_id", "==", userID);
+      // When data changes, automatically retrieve updated snapshot of message documents
+      unsubMessages = onSnapshot(q, (snapshot) => {
+        let newMessages = [];
+        // Iterate through each message document in the snapshot
+        snapshot.forEach((doc) => {
+          // Create new object with the message data and add it to the newMessages array
+          newMessages.push({
+            _id: doc.id,
+            ...doc.data(),
+            createdAt: new Date(doc.data().createdAt.toMillis()),
+          });
         });
+        // Cache messages in AsyncStorage
+        cacheMessages(newMessages);
+        // Update messages with Firestore
+        setMessages(newMessages);
       });
-      // Update messages with Firestore messages
-      setMessages(newMessages);
-    });
+    } else loadCachedMessages();
 
-    // Clean up the listener
+    // Unregister listener to prevent duplicated listeners (memory leaks) when component re-renders
     return () => {
       if (unsubMessages) unsubMessages();
     };
-  }, []);
+  }, [isConnected]);
+
+  // Function to cache messages in AsyncStorage for offline use
+  const cacheMessages = async (messagesToCache) => {
+    try {
+      // Create cached message object with the key "messages" and the messages array
+      await AsyncStorage.setItem("messages", JSON.stringify(messagesToCache));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  // Function to load cached messages from AsyncStorage when offline
+  const loadCachedMessages = async () => {
+    try {
+      // Retrieve cached messages from AsyncStorage
+      const cachedMessages = (await AsyncStorage.getItem("messages")) || [];
+      // Parse the cached messages back into an array and update the messages state
+      setMessages(JSON.parse(cachedMessages));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   // Effect to update the screen title with the user's name
   useEffect(() => {
