@@ -1,3 +1,4 @@
+// React & React Native Core Components & APIs
 import { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -12,9 +13,11 @@ import {
   Keyboard,
   Alert,
 } from "react-native";
+
+// Firebase Authentication Module
 import { getAuth, signInAnonymously } from "firebase/auth";
 
-// Import the local image and icon
+// Local Assets
 const backgroundImage = require("../assets/background-image.png");
 
 const Start = ({ navigation }) => {

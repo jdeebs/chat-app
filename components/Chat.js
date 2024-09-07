@@ -1,24 +1,24 @@
+// React & React Native Core Components & APIs
 import { useEffect, useState } from "react";
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
-import { Bubble, GiftedChat } from "react-native-gifted-chat";
-import {
-  collection,
-  addDoc,
-  onSnapshot,
-  query,
-  orderBy,
-} from "firebase/firestore";
+
+// Gifted Chat Components
+import { GiftedChat, Bubble } from "react-native-gifted-chat";
+
+// Firebase Firestore Modules
+import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
 
 const Chat = ({ db, route, navigation }) => {
   // Extract userID, name, and background props from the route
   const { userID, name, background } = route.params;
   const [messages, setMessages] = useState([]);
 
-  // Callback function to append new messages to the GiftedChat component using the messages state
+  // Function to append new messages to the GiftedChat component using the messages state
   const onSend = (newMessages) => {
     addDoc(collection(db, "messages"), newMessages[0]);
   };
 
+  // Custom rendering for message bubbles
   const renderBubble = (props) => {
     return (
       <Bubble
@@ -35,11 +35,11 @@ const Chat = ({ db, route, navigation }) => {
     );
   };
 
+  // Effect to listen to real-time updates from Firestore
   useEffect(() => {
     // Define query to get messages from Firestore
     const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
 
-    // Real-time query listener,
     // When data changes, automatically retrieve updated snapshot of message documents
     const unsubMessages = onSnapshot(q, (snapshot) => {
       let newMessages = [];
@@ -62,6 +62,7 @@ const Chat = ({ db, route, navigation }) => {
     };
   }, []);
 
+  // Effect to update the screen title with the user's name
   useEffect(() => {
     // Set the title of the screen to the user's name or "Chat" if no name is provided
     if (name && name.trim() !== "") {
