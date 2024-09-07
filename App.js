@@ -1,4 +1,5 @@
-// React Native Core Components & APIs
+// React & React Native Core Components & APIs
+import { useEffect } from "react";
 import { StyleSheet } from "react-native";
 
 // React Navigation Modules
@@ -10,7 +11,11 @@ import { useNetInfo } from "@react-native-community/netinfo";
 
 // Firebase Core & Firestore Modules
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import {
+  getFirestore,
+  disableNetwork,
+  enableNetwork,
+} from "firebase/firestore";
 
 // App Screens
 import Start from "./components/Start";

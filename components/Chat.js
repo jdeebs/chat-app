@@ -12,12 +12,13 @@ import {
   onSnapshot,
   query,
   orderBy,
+  where,
 } from "firebase/firestore";
 
 // Async Storage for Data Caching
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Chat = ({ db, route, navigation }) => {
+const Chat = ({ db, route, navigation, isConnected }) => {
   // Extract userID, name, and background props from the route
   const { userID, name, background } = route.params;
   const [messages, setMessages] = useState([]);
