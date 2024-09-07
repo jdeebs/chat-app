@@ -23,12 +23,12 @@ const Chat = ({ db, route, navigation, isConnected }) => {
   const { userID, name, background } = route.params;
   const [messages, setMessages] = useState([]);
 
-  // Function to append new messages to the GiftedChat component using the messages state
+  // Append new messages to the GiftedChat component using the messages state
   const onSend = (newMessages) => {
     addDoc(collection(db, "messages"), newMessages[0]);
   };
 
-  // Function to conditionally render the input toolbar based on network connectivity
+  // Conditionally render the input toolbar based on network connectivity
   const renderInputToolbar = (props) => {
     if (isConnected) return <InputToolbar {...props} />;
     else return null;
@@ -51,17 +51,18 @@ const Chat = ({ db, route, navigation, isConnected }) => {
     );
   };
 
-  // Effect to listen to real-time updates from Firestore
+  // Subscribe to Firestore updates (real-time) or load cached messages when offline
   let unsubMessages;
   useEffect(() => {
     if (isConnected === true) {
+      // Clean up existing listener
       if (unsubMessages) unsubMessages();
       unsubMessages = null;
 
       // Define query to get messages from Firestore
       const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
       where("_id", "==", userID);
-      // When data changes, automatically retrieve updated snapshot of message documents
+      // Retrieve updated snapshot of message documents
       unsubMessages = onSnapshot(q, (snapshot) => {
         let newMessages = [];
         // Iterate through each message document in the snapshot
@@ -86,7 +87,7 @@ const Chat = ({ db, route, navigation, isConnected }) => {
     };
   }, [isConnected]);
 
-  // Function to cache messages in AsyncStorage for offline use
+  // Cache messages in AsyncStorage for offline use
   const cacheMessages = async (messagesToCache) => {
     try {
       // Create cached message object with the key "messages" and the messages array
@@ -96,7 +97,7 @@ const Chat = ({ db, route, navigation, isConnected }) => {
     }
   };
 
-  // Function to load cached messages from AsyncStorage when offline
+  // Load cached messages from AsyncStorage when offline
   const loadCachedMessages = async () => {
     try {
       // Retrieve cached messages from AsyncStorage
@@ -108,15 +109,14 @@ const Chat = ({ db, route, navigation, isConnected }) => {
     }
   };
 
-  // Effect to update the screen title with the user's name
+  // Set the screen title to the user's name or default to "Chat"
   useEffect(() => {
-    // Set the title of the screen to the user's name or "Chat" if no name is provided
     if (name && name.trim() !== "") {
       navigation.setOptions({ title: `${name}'s Chat` });
     } else {
       navigation.setOptions({ title: "Chat" });
     }
-  }, [name, navigation]); // Update when name or nav changes
+  }, [name, navigation]);
 
   // Render component with dynamic background color passed from Start.js
   return (
