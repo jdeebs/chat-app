@@ -131,9 +131,10 @@ const Chat = ({ db, route, navigation, isConnected }) => {
           name: name,
         }}
       />
-      {Platform.OS === "android" || Platform.OS === "ios" ? (
-        <KeyboardAvoidingView behavior="height" style={styles.iosKeyboard} />
-      ) : null}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+      ></KeyboardAvoidingView>
     </View>
   );
 };
@@ -141,10 +142,6 @@ const Chat = ({ db, route, navigation, isConnected }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  iosKeyboard: {
-    // Conditional padding for iOS
-    paddingBottom: Platform.OS === "ios" ? 34 : 0,
   },
 });
 
