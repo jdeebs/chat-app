@@ -21,9 +21,7 @@ import { getAuth, signInAnonymously } from "firebase/auth";
 const backgroundImage = require("../assets/background-image.png");
 
 const Start = ({ navigation }) => {
-  // State for changes to name input value
   const [name, setName] = useState("");
-  // State for changes to chosen background color
   const [background, setBackground] = useState("");
 
   // Initialize Firebase authentication handler
@@ -47,13 +45,13 @@ const Start = ({ navigation }) => {
       });
   };
 
-  // Set the title of the screen to "Home" only after the component mounts
+  // Set screen title to "Home" after component mounts
   useEffect(() => {
     navigation.setOptions({ title: `Home` });
   }, [navigation]);
 
   return (
-    // KeyboardAvoidingView component to handle responsive keyboard behavior on iOS and Android
+    // Handle responsive keyboard behavior on iOS and Android
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
@@ -89,21 +87,27 @@ const Start = ({ navigation }) => {
                 Choose Background Color:
               </Text>
               <View style={styles.colorButtonsContainer}>
-                {/* Render the Background Color buttons for each color */}
+
+                {/* Render dark bg-color button */}
                 <TouchableOpacity
                   accessible={true}
-                  accessibilityLabel="More options"
-                  accessibilityHint="Lets you choose to send an image or your geolocation."
+                  accessibilityLabel="Select dark color"
+                  accessibilityHint="Selects a dark background color"
                   accessibilityRole="button"
                   style={[
                     styles.chooseColor,
                     { backgroundColor: "#090C08" },
                     background === "#090C08" && styles.selectedColor,
                   ]}
-                  // Set the function to handle button press
                   onPress={() => setBackground("#090C08")}
                 ></TouchableOpacity>
+
+                {/* Render gray bg-color button */}
                 <TouchableOpacity
+                  accessible={true}
+                  accessibilityLabel="Select gray color"
+                  accessibilityHint="Selects a gray background color"
+                  accessibilityRole="button"
                   style={[
                     styles.chooseColor,
                     { backgroundColor: "#474056" },
@@ -111,7 +115,13 @@ const Start = ({ navigation }) => {
                   ]}
                   onPress={() => setBackground("#474056")}
                 ></TouchableOpacity>
+
+                {/* Render blue bg-color button */}
                 <TouchableOpacity
+                  accessible={true}
+                  accessibilityLabel="Select blue color"
+                  accessibilityHint="Selects a blue background color"
+                  accessibilityRole="button"
                   style={[
                     styles.chooseColor,
                     { backgroundColor: "#8A95A5" },
@@ -119,7 +129,13 @@ const Start = ({ navigation }) => {
                   ]}
                   onPress={() => setBackground("#8A95A5")}
                 ></TouchableOpacity>
+
+                {/* Render green bg-color button */}
                 <TouchableOpacity
+                  accessible={true}
+                  accessibilityLabel="Select green color"
+                  accessibilityHint="Selects a green background color"
+                  accessibilityRole="button"
                   style={[
                     styles.chooseColor,
                     { backgroundColor: "#B9C6AE" },
@@ -131,7 +147,13 @@ const Start = ({ navigation }) => {
             </View>
 
             {/* Render the Start Chatting button and run the signInUser function on press */}
-            <TouchableOpacity style={styles.button} onPress={signInUser}>
+            <TouchableOpacity
+              accessibilityLabel="Start Chatting"
+              accessibilityHint="Navigates to the chat screen"
+              accessibilityRole="button"
+              style={styles.button}
+              onPress={signInUser}
+            >
               <Text style={styles.buttonText}>Start Chatting</Text>
             </TouchableOpacity>
           </View>
