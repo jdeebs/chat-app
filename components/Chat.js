@@ -18,6 +18,9 @@ import {
 // Async Storage for Data Caching
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// Custom Actions Component
+import CustomActions from "./CustomActions";
+
 const Chat = ({ db, route, navigation, isConnected }) => {
   // Extract userID, name, and background props from the route
   const { userID, name, background } = route.params;
@@ -25,13 +28,8 @@ const Chat = ({ db, route, navigation, isConnected }) => {
 
   // Append new messages to the GiftedChat component using the messages state
   const onSend = (newMessages) => {
+    // Takes 2 props (collection reference, data to add) then adds data (new message document) to Firestore db
     addDoc(collection(db, "messages"), newMessages[0]);
-  };
-
-  // Conditionally render the input toolbar based on network connectivity
-  const renderInputToolbar = (props) => {
-    if (isConnected) return <InputToolbar {...props} />;
-    else return null;
   };
 
   // Custom rendering for message bubbles
@@ -49,6 +47,16 @@ const Chat = ({ db, route, navigation, isConnected }) => {
         }}
       />
     );
+  };
+
+  // Conditionally render the input toolbar based on network connectivity
+  const renderInputToolbar = (props) => {
+    if (isConnected) return <InputToolbar {...props} />;
+    else return null;
+  };
+
+  const renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
   };
 
   // Subscribe to Firestore updates (real-time) or load cached messages when offline
@@ -125,6 +133,7 @@ const Chat = ({ db, route, navigation, isConnected }) => {
         messages={messages}
         renderBubble={renderBubble}
         renderInputToolbar={renderInputToolbar}
+        renderActions={renderCustomActions}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: userID,
