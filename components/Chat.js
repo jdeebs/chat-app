@@ -36,7 +36,9 @@ const Chat = ({ db, route, navigation, isConnected }) => {
   const renderBubble = (props) => {
     return (
       <Bubble
+        // Pass default props to maintain default behavior
         {...props}
+        // Overwrite wrapperStyle prop to customize bubble color based on sender
         wrapperStyle={{
           right: {
             backgroundColor: "#000",
@@ -51,6 +53,7 @@ const Chat = ({ db, route, navigation, isConnected }) => {
 
   // Conditionally render the input toolbar based on network connectivity
   const renderInputToolbar = (props) => {
+    // Pass default props to maintain default behavior
     if (isConnected) return <InputToolbar {...props} />;
     else return null;
   };
