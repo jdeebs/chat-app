@@ -13,7 +13,6 @@ import {
   onSnapshot,
   query,
   orderBy,
-  where,
 } from "firebase/firestore";
 
 // Async Storage for Data Caching
@@ -58,13 +57,15 @@ const Chat = ({ db, route, navigation, isConnected }) => {
     if (isConnected) return <InputToolbar {...props} />;
     else return null;
   };
-  // 
+
+  // Render custom action "+" button for more options
   const renderCustomActions = (props) => {
-    return <CustomActions {...props} />;
+    return <CustomActions {...props} onSend={onSend} />;
   };
 
   const renderCustomView = (props) => {
     const { currentMessage } = props;
+    // If the message contains location data
     if (currentMessage.location) {
       return (
         // Render a MapView component with the current location data
@@ -74,7 +75,6 @@ const Chat = ({ db, route, navigation, isConnected }) => {
             // Current location data
             latitude: currentMessage.location.latitude,
             longitude: currentMessage.location.longitude,
-
             // Delta values control the zoom level
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
@@ -95,8 +95,10 @@ const Chat = ({ db, route, navigation, isConnected }) => {
       unsubMessages = null;
 
       // Define query to get messages from Firestore
-      const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-      where("_id", "==", userID);
+      const q = query(
+        collection(db, "messages"),
+        orderBy("createdAt", "desc")
+      );
       // Retrieve updated snapshot of message documents
       unsubMessages = onSnapshot(q, (snapshot) => {
         let newMessages = [];
@@ -160,18 +162,17 @@ const Chat = ({ db, route, navigation, isConnected }) => {
         messages={messages}
         renderBubble={renderBubble}
         renderInputToolbar={renderInputToolbar}
+        onSend={(messages) => onSend(messages)}
         renderActions={renderCustomActions}
         renderCustomView={renderCustomView}
-        onSend={(messages) => onSend(messages)}
         user={{
           _id: userID,
           name: name,
         }}
       />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      ></KeyboardAvoidingView>
+      {Platform.OS === "android" ? (
+        <KeyboardAvoidingView behavior="height" />
+      ) : null}
     </View>
   );
 };

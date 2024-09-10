@@ -1,6 +1,7 @@
 // React & React Native Core Components & APIs
 import { useEffect } from "react";
 import { StyleSheet, Alert } from "react-native";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 // React Navigation Modules
 import { NavigationContainer } from "@react-navigation/native";
@@ -24,7 +25,7 @@ import Chat from "./components/Chat";
 // Create the stack navigator
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+const App = () => {
   const firebaseConfig = {
     apiKey: "AIzaSyAc3zlMx2mt3ASOg6YvfSwqVi5V-TrrePM",
     authDomain: "chat-app-fd428.firebaseapp.com",
@@ -52,23 +53,25 @@ export default function App() {
   }, [connectionStatus.isConnected]);
 
   return (
-    <NavigationContainer>
-      {/* Define the navigation stack */}
-      <Stack.Navigator initialRouteName="Screen1">
-        <Stack.Screen name="Start Screen" component={Start} />
-        {/* Ensure this name matches the one used in navigation.navigate (the Start Chatting button) */}
-        <Stack.Screen name="Chat Screen">
-          {/* Functional component renders the Chat component, passing the Firestore database reference as a prop */}
-          {(props) => (
-            <Chat
-              isConnected={connectionStatus.isConnected}
-              db={db}
-              {...props}
-            />
-          )}
-        </Stack.Screen>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ActionSheetProvider>
+      <NavigationContainer>
+        {/* Define the navigation stack */}
+        <Stack.Navigator initialRouteName="Screen1">
+          <Stack.Screen name="Start Screen" component={Start} />
+          {/* Ensure this name matches the one used in navigation.navigate (the Start Chatting button) */}
+          <Stack.Screen name="Chat Screen">
+            {/* Functional component renders the Chat component, passing the Firestore database reference as a prop */}
+            {(props) => (
+              <Chat
+                isConnected={connectionStatus.isConnected}
+                db={db}
+                {...props}
+              />
+            )}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ActionSheetProvider>
   );
 }
 
@@ -80,3 +83,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+export default App;
