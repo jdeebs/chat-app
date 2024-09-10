@@ -1,6 +1,7 @@
 // React & React Native Core Components & APIs
 import { useEffect, useState } from "react";
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
+import MapView from "react-native-maps";
 
 // Gifted Chat Components
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
@@ -57,9 +58,32 @@ const Chat = ({ db, route, navigation, isConnected }) => {
     if (isConnected) return <InputToolbar {...props} />;
     else return null;
   };
-
+  // 
   const renderCustomActions = (props) => {
     return <CustomActions {...props} />;
+  };
+
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        // Render a MapView component with the current location data
+        <MapView
+          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+          region={{
+            // Current location data
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+
+            // Delta values control the zoom level
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    // If the message does not contain location data
+    return null;
   };
 
   // Subscribe to Firestore updates (real-time) or load cached messages when offline
@@ -137,6 +161,7 @@ const Chat = ({ db, route, navigation, isConnected }) => {
         renderBubble={renderBubble}
         renderInputToolbar={renderInputToolbar}
         renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: userID,

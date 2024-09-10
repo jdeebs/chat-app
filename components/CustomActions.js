@@ -1,11 +1,40 @@
 // React & React Native Core Components & APIs
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 
+// Import All Expo Module functions To Reference As Collective Objects
+import * as ImagePicker from "expo-image-picker";
+import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
+
 // Expo Action Sheet Module
 import { useActionSheet } from "@expo/react-native-action-sheet";
 
-const CustomActions = ({ wrapperStyle, iconTextStyle }) => {
+const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
   const actionSheet = useActionSheet();
+
+  const getLocation = async () => {
+    // Request permission to access the location
+    let permissions = await Location.requestForegroundPermissionsAsync();
+
+    // If permission is granted, get the current location
+    if (permissions?.granted) {
+      const location = await Location.getCurrentPositionAsync({});
+      if (location) {
+        // Set the location state to the current location
+        onSend({
+          location: {
+            longitude: location.coords.longitude,
+            latitude: location.coords.latitude,
+          },
+        });
+      } else {
+        Alert.alert("Error occurred while fetching location.");
+      }
+      // If permission is not granted, alert the user
+    } else {
+      Alert.alert("Location access denied. Please enable location access.");
+    }
+  };
 
   const onActionPress = () => {
     // Create options for the user to choose from
@@ -22,14 +51,13 @@ const CustomActions = ({ wrapperStyle, iconTextStyle }) => {
       async (buttonIndex) => {
         switch (buttonIndex) {
           case 0:
-            console.log("User wants to pick an image from the library");
-            break;
+            pickImage();
+            return;
           case 1:
-            console.log("User wants to take a picture");
-            break;
+            takePhoto();
+            return;
           case 2:
-            console.log("User wants to get their location");
-            break;
+            getLocation();
           default:
         }
       }
