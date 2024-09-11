@@ -69,37 +69,41 @@ const CustomActions = ({
     );
   };
 
+  const uploadAndSendImage = async (imageURI) => {
+    // Take the image URI as a prop, generate unique reference string, and fetch the image
+    const uniqueRefString = generateReference(imageURI);
+    const newUploadRef = ref(storage, uniqueRefString);
+    const response = await fetch(imageURI);
+    // Get the image as a blob to upload to Firebase storage
+    const blob = await response.blob();
+    // Method to upload blob to the Firebase storage bucket
+    uploadBytes(newUploadRef, blob).then(async (snapshot) => {
+      // Get the download URL of the image
+      const imageURL = await getDownloadURL(snapshot.ref);
+      const imageMessage = {
+        _id: uuidv4(),
+        text: "",
+        createdAt: new Date(),
+        user: { _id: userID, name: name },
+        image: imageURL,
+      };
+      // Send the image message to the GiftedChat component
+      onSend([imageMessage]);
+    });
+  };
+
   const pickImage = async () => {
     // Request permission to access media library
     let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
+    // Check if permission is granted
     if (permissions?.granted) {
+      // Launch the image library to select an image
       let result = await ImagePicker.launchImageLibraryAsync();
+      // Check if the user selected an image
       if (!result.canceled) {
-        // Get the image URI, generate unique reference string, and fetch the image
-        const imageURI = result.assets[0].uri;
-        const uniqueRefString = generateReference(imageURI);
-        const response = await fetch(imageURI);
-        // Get the image as a blob to upload to Firebase storage
-        const blob = await response.blob();
-        // Reference to the Firebase storage bucket
-        const newUploadRef = ref(storage, uniqueRefString);
-        // Method to upload the blob to the Firebase storage bucket
-        uploadBytes(newUploadRef, blob).then(async (snapshot) => {
-          console.log("File has been uploaded successfully.");
-          // Get the download URL of the image
-          const imageURL = await getDownloadURL(snapshot.ref);
-
-          // Format the message with the correct data (no undefined values)
-          const imageMessage = {
-            _id: uuidv4(),
-            text: "",
-            createdAt: new Date(),
-            user: { _id: userID, name: name },
-            image: imageURL,
-          };
-          onSend([imageMessage]);
-        });
+        // Upload the image and send it to the GiftedChat component
+        await uploadAndSendImage(result.assets[0].uri);
       } else Alert.alert("Permission access denied.");
     }
   };
