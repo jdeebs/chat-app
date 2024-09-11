@@ -17,6 +17,7 @@ import {
   disableNetwork,
   enableNetwork,
 } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 // App Screens
 import Start from "./components/Start";
@@ -38,6 +39,7 @@ const App = () => {
   // Initialize Firebase, Cloud Firestore and get a reference to the database
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const storage = getStorage(app);
 
   // Define new state for network connectivity status
   const connectionStatus = useNetInfo();
@@ -65,6 +67,7 @@ const App = () => {
               <Chat
                 isConnected={connectionStatus.isConnected}
                 db={db}
+                storage={storage}
                 {...props}
               />
             )}

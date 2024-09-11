@@ -21,7 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // Custom Actions Component
 import CustomActions from "./CustomActions";
 
-const Chat = ({ db, route, navigation, isConnected }) => {
+const Chat = ({ db, route, navigation, isConnected, storage }) => {
   // Extract userID, name, and background props from the route
   const { userID, name, background } = route.params;
   const [messages, setMessages] = useState([]);
@@ -64,7 +64,7 @@ const Chat = ({ db, route, navigation, isConnected }) => {
   // Render custom action "+" button for more options
   const renderCustomActions = (props) => {
     return (
-      <CustomActions {...props} onSend={onSend} userID={userID} name={name} />
+      <CustomActions {...props} storage={storage} onSend={onSend} userID={userID} name={name} />
     );
   };
 

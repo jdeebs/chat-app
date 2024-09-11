@@ -8,21 +8,34 @@ import {
   Alert,
 } from "react-native";
 
+// Firebase Firestore Modules
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+
 // All Expo Module functions To Reference As Collective Objects
 import * as Location from "expo-location";
+import * as ImagePicker from "expo-image-picker";
 
 // Expo Action Sheet Module
 import { useActionSheet } from "@expo/react-native-action-sheet";
 
 // UUID Library
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
-const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, name }) => {
+const CustomActions = ({
+  wrapperStyle,
+  iconTextStyle,
+  storage,
+  onSend,
+  userID,
+  name,
+}) => {
   const actionSheet = useActionSheet();
 
-  if (!onSend) {
-    console.error("onSend function is undefined in CustomActions");
-  }
+  const generateReference = (uri) => {
+    const timeStamp = new Date().getTime();
+    const imageName = uri.split("/")[uri.split("/").length - 1];
+    return `${userID}-${timeStamp}-${imageName}`;
+  };
 
   const onActionPress = () => {
     // Dismiss the keyboard before opening the action sheet
@@ -56,6 +69,41 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, name }) =>
     );
   };
 
+  const pickImage = async () => {
+    // Request permission to access media library
+    let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissions?.granted) {
+      let result = await ImagePicker.launchImageLibraryAsync();
+      if (!result.canceled) {
+        // Get the image URI, generate unique reference string, and fetch the image
+        const imageURI = result.assets[0].uri;
+        const uniqueRefString = generateReference(imageURI);
+        const response = await fetch(imageURI);
+        // Get the image as a blob to upload to Firebase storage
+        const blob = await response.blob();
+        // Reference to the Firebase storage bucket
+        const newUploadRef = ref(storage, uniqueRefString);
+        // Method to upload the blob to the Firebase storage bucket
+        uploadBytes(newUploadRef, blob).then(async (snapshot) => {
+          console.log("File has been uploaded successfully.");
+          // Get the download URL of the image
+          const imageURL = await getDownloadURL(snapshot.ref);
+
+          // Format the message with the correct data (no undefined values)
+          const imageMessage = {
+            _id: uuidv4(),
+            text: "",
+            createdAt: new Date(),
+            user: { _id: userID, name: name },
+            image: imageURL,
+          };
+          onSend([imageMessage]);
+        });
+      } else Alert.alert("Permission access denied.");
+    }
+  };
+
   const getLocation = async () => {
     try {
       // Request permission to access the location
@@ -68,6 +116,7 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, name }) =>
 
         // Check if location data is available
         if (location) {
+          // Format the message with the correct data (no undefined values)
           const locationMessage = {
             _id: uuidv4(),
             text: "",
