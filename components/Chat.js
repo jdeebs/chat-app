@@ -28,8 +28,11 @@ const Chat = ({ db, route, navigation, isConnected }) => {
 
   // Append new messages to the GiftedChat component using the messages state
   const onSend = (newMessages) => {
+    console.log("New message being sent: ", newMessages[0]);
     // Takes 2 props (collection reference, data to add) then adds data (new message document) to Firestore db
-    addDoc(collection(db, "messages"), newMessages[0]);
+    addDoc(collection(db, "messages"), newMessages[0])
+      .then(() => console.log("Message added successfully"))
+      .catch((error) => console.log("Error adding message: ", error));
   };
 
   // Custom rendering for message bubbles
@@ -60,7 +63,9 @@ const Chat = ({ db, route, navigation, isConnected }) => {
 
   // Render custom action "+" button for more options
   const renderCustomActions = (props) => {
-    return <CustomActions {...props} onSend={onSend} />;
+    return (
+      <CustomActions {...props} onSend={onSend} userID={userID} name={name} />
+    );
   };
 
   const renderCustomView = (props) => {
@@ -69,17 +74,22 @@ const Chat = ({ db, route, navigation, isConnected }) => {
     if (currentMessage.location) {
       return (
         // Render a MapView component with the current location data
-        <MapView
-          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
-          region={{
-            // Current location data
-            latitude: currentMessage.location.latitude,
-            longitude: currentMessage.location.longitude,
-            // Delta values control the zoom level
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        />
+        <View style={{ borderRadius: 13, margin: 3, overflow: "hidden" }}>
+          <MapView
+            style={{
+              width: 150,
+              height: 100,
+            }}
+            region={{
+              // Current location data
+              latitude: currentMessage.location.latitude,
+              longitude: currentMessage.location.longitude,
+              // Delta values control the zoom level
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          />
+        </View>
       );
     }
     // If the message does not contain location data
@@ -95,10 +105,7 @@ const Chat = ({ db, route, navigation, isConnected }) => {
       unsubMessages = null;
 
       // Define query to get messages from Firestore
-      const q = query(
-        collection(db, "messages"),
-        orderBy("createdAt", "desc")
-      );
+      const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
       // Retrieve updated snapshot of message documents
       unsubMessages = onSnapshot(q, (snapshot) => {
         let newMessages = [];

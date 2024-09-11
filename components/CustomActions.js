@@ -1,5 +1,4 @@
 // React & React Native Core Components & APIs
-import { useState } from "react";
 import {
   TouchableOpacity,
   Text,
@@ -9,18 +8,21 @@ import {
   Alert,
 } from "react-native";
 
-// Import All Expo Module functions To Reference As Collective Objects
+// All Expo Module functions To Reference As Collective Objects
 import * as Location from "expo-location";
 
 // Expo Action Sheet Module
 import { useActionSheet } from "@expo/react-native-action-sheet";
 
-const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
+// UUID Library
+import { v4 as uuidv4 } from 'uuid';
+
+const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, name }) => {
   const actionSheet = useActionSheet();
 
   if (!onSend) {
     console.error("onSend function is undefined in CustomActions");
-  };
+  }
 
   const onActionPress = () => {
     // Dismiss the keyboard before opening the action sheet
@@ -66,10 +68,17 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
 
         // Check if location data is available
         if (location) {
-          onSend({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          });
+          const locationMessage = {
+            _id: uuidv4(),
+            text: "",
+            createdAt: new Date(),
+            user: { _id: userID, name: name },
+            location: {
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            },
+          };
+          onSend([locationMessage]);
         } else {
           Alert.alert("Location data is not available.");
         }
@@ -84,11 +93,11 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
   };
 
   return (
-      <TouchableOpacity style={styles.container} onPress={onActionPress}>
-        <View style={[styles.wrapper, wrapperStyle]}>
-          <Text style={[styles.iconText, iconTextStyle]}>+</Text>
-        </View>
-      </TouchableOpacity>
+    <TouchableOpacity style={styles.container} onPress={onActionPress}>
+      <View style={[styles.wrapper, wrapperStyle]}>
+        <Text style={[styles.iconText, iconTextStyle]}>+</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
