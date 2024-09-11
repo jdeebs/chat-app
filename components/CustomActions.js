@@ -31,6 +31,7 @@ const CustomActions = ({
 }) => {
   const actionSheet = useActionSheet();
 
+  // Generate a unique reference string for each image uploaded
   const generateReference = (uri) => {
     const timeStamp = new Date().getTime();
     const imageName = uri.split("/")[uri.split("/").length - 1];

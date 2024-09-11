@@ -44,10 +44,10 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
         // Overwrite wrapperStyle prop to customize bubble color based on sender
         wrapperStyle={{
           right: {
-            backgroundColor: "#000",
+            backgroundColor: "#808080",
           },
           left: {
-            backgroundColor: "#FFF",
+            backgroundColor: "#F5F5F5",
           },
         }}
       />
