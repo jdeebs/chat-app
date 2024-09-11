@@ -108,6 +108,23 @@ const CustomActions = ({
     }
   };
 
+  const takePhoto = async () => {
+    // Request permission to access the camera
+    let permissions = await ImagePicker.requestCameraPermissionsAsync();
+
+    // Check if permission is granted
+    if (permissions?.granted) {
+      // Launch the camera to take a picture
+      let result = await ImagePicker.launchCameraAsync();
+
+      // Check if the user took a picture
+      if (!result.canceled) {
+        // Upload the image and send it to the GiftedChat component
+        await uploadAndSendImage(result.assets[0].uri);
+      } else Alert.alert("Permission access denied.");
+    }
+  };
+
   const getLocation = async () => {
     try {
       // Request permission to access the location
