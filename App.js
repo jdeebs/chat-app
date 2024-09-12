@@ -18,6 +18,8 @@ import {
   enableNetwork,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import {initializeAuth, getReactNativePersistence} from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 // App Screens
 import Start from "./components/Start";
@@ -26,21 +28,26 @@ import Chat from "./components/Chat";
 // Create the stack navigator
 const Stack = createNativeStackNavigator();
 
+// Configure Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAc3zlMx2mt3ASOg6YvfSwqVi5V-TrrePM",
+  authDomain: "chat-app-fd428.firebaseapp.com",
+  projectId: "chat-app-fd428",
+  storageBucket: "chat-app-fd428.appspot.com",
+  messagingSenderId: "98351051865",
+  appId: "1:98351051865:web:c5ade7ed8de1398dde2d48",
+};
+
+// Initialize Firebase, Cloud Firestore and get a reference to the database
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+});
+export { auth };
+
 const App = () => {
-  const firebaseConfig = {
-    apiKey: "AIzaSyAc3zlMx2mt3ASOg6YvfSwqVi5V-TrrePM",
-    authDomain: "chat-app-fd428.firebaseapp.com",
-    projectId: "chat-app-fd428",
-    storageBucket: "chat-app-fd428.appspot.com",
-    messagingSenderId: "98351051865",
-    appId: "1:98351051865:web:c5ade7ed8de1398dde2d48",
-  };
-
-  // Initialize Firebase, Cloud Firestore and get a reference to the database
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
-
   // Define new state for network connectivity status
   const connectionStatus = useNetInfo();
 
