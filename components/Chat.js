@@ -28,11 +28,8 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
 
   // Append new messages to the GiftedChat component using the messages state
   const onSend = (newMessages) => {
-    console.log("New message being sent: ", newMessages[0]);
     // Takes 2 props (collection reference, data to add) then adds data (new message document) to Firestore db
-    addDoc(collection(db, "messages"), newMessages[0])
-      .then(() => console.log("Message added successfully"))
-      .catch((error) => console.log("Error adding message: ", error));
+    addDoc(collection(db, "messages"), newMessages[0]);
   };
 
   // Custom rendering for message bubbles
@@ -64,7 +61,13 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
   // Render custom action "+" button for more options
   const renderCustomActions = (props) => {
     return (
-      <CustomActions {...props} storage={storage} onSend={onSend} userID={userID} name={name} />
+      <CustomActions
+        {...props}
+        storage={storage}
+        onSend={onSend}
+        userID={userID}
+        name={name}
+      />
     );
   };
 

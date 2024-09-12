@@ -17,12 +17,16 @@ import {
 // Firebase Authentication Module
 import { getAuth, signInAnonymously } from "firebase/auth";
 
+// Icon Library
+import { Ionicons } from "@expo/vector-icons";
+
 // Local Assets
-const backgroundImage = require("../assets/background-image.png");
+const backgroundImage = require("../assets/start-background.jpg");
 
 const Start = ({ navigation }) => {
   const [name, setName] = useState("");
   const [background, setBackground] = useState("");
+  const colors = ["#EEF1FF", "#D2DAFF", "#AAC4FF", "#B1B2FF"];
 
   // Initialize Firebase authentication handler
   const auth = getAuth();
@@ -69,81 +73,46 @@ const Start = ({ navigation }) => {
           source={backgroundImage}
           resizeMode="cover"
           style={styles.backgroundImage}
+          imageStyle={{ opacity: 0.6 }}
         >
           {/* Render the title */}
           <Text style={styles.title}>Chat App</Text>
 
           {/* Render the home screen components */}
           <View style={styles.innerContainer}>
-            <TextInput
-              style={styles.textInput}
-              value={name}
-              onChangeText={setName}
-              placeholder="Your Name"
-            ></TextInput>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.textInput}
+                value={name}
+                onChangeText={setName}
+                placeholder="Enter your name here"
+                placeholderTextColor="#757083"
+              />
+              <Ionicons
+                name="person"
+                size={24}
+                color="#E0E0E0"
+                style={styles.inputIcon}
+              />
+            </View>
 
+            <Text style={styles.innerContainerLabel}>
+              Choose a color for your chat theme
+            </Text>
             {/* Render the Choose Background Color box */}
-            <View style={styles.chooseColorBox}>
-              <Text style={styles.chooseColorText}>
-                Choose Background Color:
-              </Text>
-              <View style={styles.colorButtonsContainer}>
-
-                {/* Render dark bg-color button */}
-                <TouchableOpacity
-                  accessible={true}
-                  accessibilityLabel="Select dark color"
-                  accessibilityHint="Selects a dark background color"
-                  accessibilityRole="button"
-                  style={[
-                    styles.chooseColor,
-                    { backgroundColor: "#090C08" },
-                    background === "#090C08" && styles.selectedColor,
-                  ]}
-                  onPress={() => setBackground("#090C08")}
-                ></TouchableOpacity>
-
-                {/* Render gray bg-color button */}
-                <TouchableOpacity
-                  accessible={true}
-                  accessibilityLabel="Select gray color"
-                  accessibilityHint="Selects a gray background color"
-                  accessibilityRole="button"
-                  style={[
-                    styles.chooseColor,
-                    { backgroundColor: "#474056" },
-                    background === "#474056" && styles.selectedColor,
-                  ]}
-                  onPress={() => setBackground("#474056")}
-                ></TouchableOpacity>
-
-                {/* Render blue bg-color button */}
-                <TouchableOpacity
-                  accessible={true}
-                  accessibilityLabel="Select blue color"
-                  accessibilityHint="Selects a blue background color"
-                  accessibilityRole="button"
-                  style={[
-                    styles.chooseColor,
-                    { backgroundColor: "#8A95A5" },
-                    background === "#8A95A5" && styles.selectedColor,
-                  ]}
-                  onPress={() => setBackground("#8A95A5")}
-                ></TouchableOpacity>
-
-                {/* Render green bg-color button */}
-                <TouchableOpacity
-                  accessible={true}
-                  accessibilityLabel="Select green color"
-                  accessibilityHint="Selects a green background color"
-                  accessibilityRole="button"
-                  style={[
-                    styles.chooseColor,
-                    { backgroundColor: "#B9C6AE" },
-                    background === "#B9C6AE" && styles.selectedColor,
-                  ]}
-                  onPress={() => setBackground("#B9C6AE")}
-                ></TouchableOpacity>
+            <View style={styles.colorPicker}>
+              <View style={styles.colorPicker}>
+                {colors.map((color) => (
+                  <TouchableOpacity
+                    key={color}
+                    style={[
+                      styles.colorCircle,
+                      { backgroundColor: color },
+                      background === color && styles.selectedColor,
+                    ]}
+                    onPress={() => setBackground(color)}
+                  />
+                ))}
               </View>
             </View>
 
@@ -179,72 +148,96 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     justifyContent: "center",
-    marginTop: 80,
+    marginTop: 65,
     fontSize: 45,
     fontWeight: "600",
     color: "#FFF",
   },
   innerContainer: {
-    flex: 1,
     width: "88%",
     height: "44%",
+    padding: 20,
     marginBottom: 30,
-    justifyContent: "space-evenly",
+    borderRadius: 10,
+    justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#FFF",
+    backgroundColor: "#565264",
+    opacity: 0.95,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "88%",
+    maxHeight: "25%",
+    height: "25%",
+    backgroundColor: "#B1B2FF",
+    borderRadius: 10,
+    marginBottom: 20,
   },
   textInput: {
     width: "88%",
     padding: 15,
-    fontSize: 16,
-    fontWeight: "300",
-    color: "#757083",
-    borderWidth: 1,
-    borderColor: "#757083",
-    opacity: 0.7,
+    fontSize: 22,
+    fontWeight: "400",
+    color: "#000",
   },
   button: {
     width: "88%",
     height: "20%",
     padding: 10,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#757083",
+    backgroundColor: "#E8C547",
   },
   buttonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#FFF",
+    fontSize: 22,
+    fontWeight: "500",
+    color: "#000",
   },
-  chooseColorBox: {
-    width: "88%",
-    height: "20%",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  colorButtonsContainer: {
-    width: 30,
-    height: 30,
+  colorPicker: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignSelf: "flex-start",
+    width: "100%",
+    marginBottom: 20,
   },
-  chooseColor: {
-    width: 40, // Default for non-selected colors
-    height: 40, // Default for non-selected colors
-    borderRadius: 20,
-    marginRight: 15,
+  colorCircle: {
+    width: 45,
+    height: 45,
+    borderRadius: 22.5,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
   },
   selectedColor: {
-    borderWidth: 2,
-    borderColor: "#FCD95B",
+    borderWidth: 3,
+    borderColor: "#E8C547",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
-  chooseColorText: {
-    fontSize: 16,
-    fontWeight: "300",
-    color: "#757083",
-    textAlign: "left",
-    alignSelf: "flex-start",
+  innerContainerLabel: {
+    fontSize: 18,
+    fontWeight: "400",
+    color: "#fff",
+    textAlign: "center",
   },
 });
 
