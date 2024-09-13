@@ -9,7 +9,10 @@ The **Chat App** project is a mobile chat application built with React Native. T
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [User Stories](#user-stories)
+- [Prerequisites](#prerequisites)
 - [Installation](#installation)
+- [Firebase Configuration](#firebase-configuration)
+- [App Integration](#app-integration)
 - [Usage](#usage)
 - [Deployment](#deployment)
 - [Contributing](#contributing)
@@ -34,7 +37,26 @@ The **Chat App** project is a mobile chat application built with React Native. T
 - **As a user**, I want to be able to read my messages offline so I can reread conversations at any time.
 - **As a user with a visual impairment**, I want to use a chat app that is compatible with a screen reader so that I can engage with a chat interface.
 
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Node.js (version 16.x.x)
+- Expo CLI: `npm install -g expo-cli`
+- Watchman (recommended for macOS users)
+- Android Studio (for Android development)
+- Xcode (for iOS development, macOS only)
+
 ## Installation
+
+### Node.js Version
+
+Downgrade Node.js to version "16.19.0":
+
+```bash
+nvm install 16.19.0
+nvm use 16.19.0
+```
 
 1. **Clone the repository:**
 
@@ -59,6 +81,30 @@ The **Chat App** project is a mobile chat application built with React Native. T
     ```sh
     npm start
     ```
+    
+## Firebase Configuration
+
+FireBase Configuration: Sign in to Google Firebase.
+
+1. Create a new Firebase project.
+2. Set up Firestore Database in production mode.
+3. 2Adjust Firestore Rules to allow read and write access.
+4. Configure Firebase Storage (optional).
+
+## App Integration
+
+1. Register your app in the Firebase Console.
+2. Install Firebase SDK
+```npm install firebase```
+3. Initialize Firebase in your App.js file.
+
+Prerequisites
+
+1. Download the Expo Go app on your mobile device.
+2. Open the app.
+- Connect your device to the same network as your development machine.
+- Run ```npx expo start``` on your development machine.
+- Alternatively, you can scan the QR code with the Expo Go app.
 
 ## Usage
 
