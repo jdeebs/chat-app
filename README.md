@@ -81,30 +81,34 @@ nvm use 16.19.0
     ```sh
     npm start
     ```
-    
+
 ## Firebase Configuration
 
-FireBase Configuration: Sign in to Google Firebase.
+Firebase Configuration: Sign in to Google Firebase.
 
 1. Create a new Firebase project.
 2. Set up Firestore Database in production mode.
-3. 2Adjust Firestore Rules to allow read and write access.
+3. Adjust Firestore Rules to allow read and write access.
 4. Configure Firebase Storage (optional).
 
 ## App Integration
 
 1. Register your app in the Firebase Console.
-2. Install Firebase SDK
-```npm install firebase```
-3. Initialize Firebase in your App.js file.
+2. **Install Firebase SDK:**
 
-Prerequisites
+    ```bash
+    npm install firebase
+    ```
+
+3. Initialize Firebase in your `App.js` file.
+
+### Prerequisites
 
 1. Download the Expo Go app on your mobile device.
 2. Open the app.
-- Connect your device to the same network as your development machine.
-- Run ```npx expo start``` on your development machine.
-- Alternatively, you can scan the QR code with the Expo Go app.
+    - Connect your device to the same network as your development machine.
+    - Run `npx expo start` on your development machine.
+    - Alternatively, you can scan the QR code with the Expo Go app.
 
 ## Usage
 
