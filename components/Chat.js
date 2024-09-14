@@ -1,6 +1,13 @@
 // React & React Native Core Components & APIs
 import { useEffect, useState } from "react";
-import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  StyleSheet,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
 import MapView from "react-native-maps";
 
 // Gifted Chat Components
@@ -73,11 +80,30 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
 
   const renderCustomView = (props) => {
     const { currentMessage } = props;
+
+    // Allow redirect to maps app when user taps on the location message
+    const openMaps = () => {
+      const url = Platform.select({
+        ios: `http://maps.apple.com/?ll=${currentMessage.location.latitude},${currentMessage.location.longitude}`,
+        android: `http://www.google.com/maps/@${currentMessage.location.latitude},${currentMessage.location.longitude},15z`,
+      });
+      Linking.canOpenURL(url)
+        .then((supported) => {
+          if (supported) {
+            return Linking.openURL(url);
+          }
+        })
+        .catch((err) => console.error("An error occurred", err));
+    };
+
     // If the message contains location data
     if (currentMessage.location) {
       return (
-        // Render a MapView component with the current location data
-        <View style={{ borderRadius: 13, margin: 3, overflow: "hidden" }}>
+        // Render a MapView component with the current location data, wrapped in a TouchableOpacity to open maps
+        <TouchableOpacity
+          onPress={openMaps}
+          style={{ backgroundColor: "gray", width: 150, height: 100 }}
+        >
           <MapView
             style={{
               width: 150,
@@ -92,7 +118,7 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
               longitudeDelta: 0.0421,
             }}
           />
-        </View>
+        </TouchableOpacity>
       );
     }
     // If the message does not contain location data
