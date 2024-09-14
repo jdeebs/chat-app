@@ -105,6 +105,8 @@ const CustomActions = ({
       if (!result.canceled) {
         // Upload the image and send it to the GiftedChat component
         await uploadAndSendImage(result.assets[0].uri);
+      } else if (result.canceled) {
+        return;
       } else Alert.alert("Permission access denied.");
     }
   };
@@ -122,6 +124,8 @@ const CustomActions = ({
       if (!result.canceled) {
         // Upload the image and send it to the GiftedChat component
         await uploadAndSendImage(result.assets[0].uri);
+      } else if (result.canceled) {
+        return;
       } else Alert.alert("Permission access denied.");
     }
   };
