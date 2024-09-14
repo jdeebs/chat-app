@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import MapView from "react-native-maps";
 
-
 // Gifted Chat Components
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 
@@ -46,14 +45,18 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
       <Bubble
         // Pass default props to maintain default behavior
         {...props}
-        // Overwrite wrapperStyle prop to customize bubble color based on sender
+        // Overwrite style props to customize message bubbles
         wrapperStyle={{
-          right: {
-            backgroundColor: "#808080",
-          },
-          left: {
-            backgroundColor: "#F5F5F5",
-          },
+          right: styles.bubbleRight,
+          left: styles.bubbleLeft,
+        }}
+        textStyle={{
+          right: styles.bubbleTextRight,
+          left: styles.bubbleTextLeft,
+        }}
+        timeTextStyle={{
+          right: styles.timeTextRight,
+          left: styles.timeTextLeft,
         }}
       />
     );
@@ -103,12 +106,12 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
         // Render a MapView component with the current location data, wrapped in a TouchableOpacity to open maps
         <TouchableOpacity
           onPress={openMaps}
-          style={{ backgroundColor: "gray", width: 150, height: 100 }}
+          style={{ backgroundColor: "gray", width: 200, height: 150 }}
         >
           <MapView
             style={{
-              width: 150,
-              height: 100,
+              width: 200,
+              height: 150,
             }}
             region={{
               // Current location data
@@ -214,6 +217,46 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  bubbleRight: {
+    backgroundColor: "#333333",
+    borderRadius: 10,
+    padding: 6,
+    marginBottom: 8,
+    marginLeft: 100,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+  },
+  bubbleLeft: {
+    backgroundColor: "#46237A",
+    borderRadius: 10,
+    padding: 6,
+    marginBottom: 8,
+    marginRight: 100,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+  },
+  bubbleTextRight: {
+    color: "#FFF",
+    fontSize: 16,
+  },
+  bubbleTextLeft: {
+    color: "#FFF",
+    fontSize: 16,
+  },
+  timeTextRight: {
+    color: "#FFF",
+    fontSize: 12,
+  },
+  timeTextLeft: {
+    color: "#FFF",
+    fontSize: 12,
   },
 });
 
