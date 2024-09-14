@@ -8,6 +8,7 @@ import {
   TextInput,
   ImageBackground,
   KeyboardAvoidingView,
+  SafeAreaView,
   Platform,
   Pressable,
   Keyboard,
@@ -100,7 +101,7 @@ const Start = ({ navigation }) => {
               Choose a color for your chat theme
             </Text>
             {/* Render the Choose Background Color box */}
-            <View style={styles.colorPicker}>
+            <View>
               <View style={styles.colorPicker}>
                 {colors.map((color) => (
                   <TouchableOpacity
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     width: "88%",
-    padding: 15,
+    paddingLeft: 10,
     fontSize: 22,
     fontWeight: "400",
     color: "#000",
@@ -213,14 +214,15 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 22.5,
+    opacity: 1,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 4,
     },
     shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 8,
+    shadowRadius: 1,
+    elevation: 6,
   },
   selectedColor: {
     borderWidth: 3,

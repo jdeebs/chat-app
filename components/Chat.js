@@ -3,12 +3,13 @@ import { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
-  KeyboardAvoidingView,
+  SafeAreaView,
   Platform,
   TouchableOpacity,
   Linking,
 } from "react-native";
 import MapView from "react-native-maps";
+
 
 // Gifted Chat Components
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
@@ -193,7 +194,7 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
 
   // Render component with dynamic background color passed from Start.js
   return (
-    <View style={[styles.container, { backgroundColor: background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: background }]}>
       <GiftedChat
         messages={messages}
         renderBubble={renderBubble}
@@ -206,10 +207,7 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
           name: name,
         }}
       />
-      {Platform.OS === "android" ? (
-        <KeyboardAvoidingView behavior="height" />
-      ) : null}
-    </View>
+    </SafeAreaView>
   );
 };
 
