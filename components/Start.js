@@ -8,7 +8,7 @@ import {
   TextInput,
   ImageBackground,
   KeyboardAvoidingView,
-  SafeAreaView,
+  Button,
   Platform,
   Pressable,
   Keyboard,
@@ -34,6 +34,11 @@ const Start = ({ navigation }) => {
 
   // Pass function to onPress of start button
   const signInUser = () => {
+    // Check if name has at least 3 characters
+    if (name.length < 3) {
+      Alert.alert("Name must be at least 3 characters long.");
+      return;
+    }
     // Passes auth user info
     signInAnonymously(auth)
       // result is a returned information object, includes temporary user account info
@@ -88,7 +93,9 @@ const Start = ({ navigation }) => {
                 onChangeText={setName}
                 placeholder="Enter your name here"
                 placeholderTextColor="#757083"
+                caretHidden={true}
               />
+
               <Ionicons
                 name="person"
                 size={24}

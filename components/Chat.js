@@ -11,7 +11,16 @@ import {
 import MapView from "react-native-maps";
 
 // Gifted Chat Components
-import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
+import {
+  GiftedChat,
+  Bubble,
+  InputToolbar,
+  Day,
+  Send,
+} from "react-native-gifted-chat";
+
+// Icon Library
+import { Ionicons } from "@expo/vector-icons";
 
 // Firebase Firestore Modules
 import {
@@ -69,6 +78,16 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
     else return null;
   };
 
+  const renderSend = (props) => (
+    <Send {...props} containerStyle={styles.sendButtonContainer}>
+      <View style={styles.sendButton}>
+        <Ionicons name="send" size={24} color="#B1B2FF" />
+      </View>
+    </Send>
+  );
+
+  const renderDay = (props) => <Day {...props} textStyle={styles.dayText} />;
+
   // Render custom action "+" button for more options
   const renderCustomActions = (props) => {
     return (
@@ -106,12 +125,18 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
         // Render a MapView component with the current location data, wrapped in a TouchableOpacity to open maps
         <TouchableOpacity
           onPress={openMaps}
-          style={{ backgroundColor: "gray", width: 200, height: 150 }}
+          style={{
+            backgroundColor: "gray",
+            width: 200,
+            height: 150,
+            borderRadius: 13,
+          }}
         >
           <MapView
             style={{
               width: 200,
               height: 150,
+              borderRadius: 13,
             }}
             region={{
               // Current location data
@@ -202,6 +227,8 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
         messages={messages}
         renderBubble={renderBubble}
         renderInputToolbar={renderInputToolbar}
+        renderDay={renderDay}
+        renderSend={renderSend}
         onSend={(messages) => onSend(messages)}
         renderActions={renderCustomActions}
         renderCustomView={renderCustomView}
@@ -209,6 +236,8 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
           _id: userID,
           name: name,
         }}
+        scrollToBottom
+        alwaysShowSend
       />
     </SafeAreaView>
   );
@@ -257,6 +286,25 @@ const styles = StyleSheet.create({
   timeTextLeft: {
     color: "#FFF",
     fontSize: 12,
+  },
+  dayText: {
+    color: '#2E282A',
+    fontWeight: '600',
+},
+  sendButtonContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "flex-end",
+    marginRight: 10,
+    marginBottom: 5,
+  },
+  sendButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    height: 40,
+    width: 40,
+    marginRight: 5,
+    // marginBottom: Platform.OS === "ios" ? 0 : 5,
   },
 });
 

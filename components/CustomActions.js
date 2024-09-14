@@ -181,16 +181,17 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     borderRadius: 13,
-    borderColor: "#b2b2b2",
-    borderWidth: 2,
+    borderColor: "#B1B2FF",
+    borderWidth: 4,
     flex: 1,
   },
   iconText: {
-    color: "#b2b2b2",
-    fontWeight: "bold",
-    fontSize: 16,
+    color: "#B1B2FF",
+    fontWeight: "900",
+    fontSize: 20,
     backgroundColor: "transparent",
     textAlign: "center",
+    marginTop: -5,
   },
 });
 
