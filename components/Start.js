@@ -8,7 +8,6 @@ import {
   TextInput,
   ImageBackground,
   KeyboardAvoidingView,
-  Button,
   Platform,
   Pressable,
   Keyboard,

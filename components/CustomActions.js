@@ -14,6 +14,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 // All Expo Module functions To Reference As Collective Objects
 import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
+import { Audio } from "expo-av";
 
 // Expo Action Sheet Module
 import { useActionSheet } from "@expo/react-native-action-sheet";
@@ -30,6 +31,7 @@ const CustomActions = ({
   name,
 }) => {
   const actionSheet = useActionSheet();
+  // let recordingObject = null;
 
   // Generate a unique reference string for each image uploaded
   const generateReference = (uri) => {
@@ -165,6 +167,62 @@ const CustomActions = ({
       console.error("Error in getLocation function:", error);
       Alert.alert("An error occurred while fetching location.");
     }
+  };
+
+  const startRecording = async () => {
+    try {
+      // Request permission to access the microphone
+      let permissions = await Audio.requestPermissionsAsync();
+
+      // Check if permission is granted
+      if (permissions?.granted) {
+        // iOS specific config to allow recording
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+          playsInSilentModeIOS: true,
+        });
+
+        // Create a new recording instance
+        Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY)
+          .then((results) => {
+            // Store the recording object for later use
+            return results.recording;
+          })
+          .then((recording) => {
+            // Assign the recording object to the variable
+            recordingObject = recording;
+          });
+      }
+    } catch (err) {
+      Alert.alert("Failed to record.");
+    }
+  };
+
+  const stopRecording = async () => {
+    // Stop the recording for iOS
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      playsInSilentModeIOS: false,
+    });
+    // Stop and unload the recording object
+    await recordingObject.stopAndUnloadAsync();
+  };
+
+  const sendRecordedSound = async () => {
+    await stopRecording();
+    // Get the URI of the recorded sound
+    const uniqueRefString = generateReference(recordingObject.getURI());
+    // Create a reference to the storage location
+    const newUploadRef = ref(storage, uniqueRefString);
+    // Fetch the recorded sound
+    const response = await fetch(recordingObject.getURI());
+    // Get the sound as a blob to upload to Firebase storage
+    const blob = await response.blob();
+    // Upload the blob to Firebase storage
+    uploadBytes(newUploadRef, blob).then(async (snapshot) => {
+      const soundURL = await getDownloadURL(snapshot.ref);
+      onSend({ audio: soundURL });
+    });
   };
 
   return (
