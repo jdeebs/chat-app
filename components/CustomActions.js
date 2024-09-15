@@ -1,4 +1,5 @@
 // React & React Native Core Components & APIs
+import { useEffect } from "react";
 import {
   TouchableOpacity,
   Text,
@@ -49,6 +50,7 @@ const CustomActions = ({
       "Choose From Library",
       "Take Picture",
       "Send Location",
+      "Record Audio Message",
       "Cancel",
     ];
     const cancelButtonIndex = options.length - 1;
@@ -65,6 +67,9 @@ const CustomActions = ({
             return;
           case 2:
             getLocation();
+            return;
+          case 3:
+            startRecording();
             return;
           default:
         }
@@ -191,6 +196,27 @@ const CustomActions = ({
           .then((recording) => {
             // Assign the recording object to the variable
             recordingObject = recording;
+            // Show an alert to indicate recording is in progress with options to cancel or stop and send
+            Alert.alert(
+              "You are recording...",
+              undefined,
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => {
+                    stopRecording();
+                  },
+                },
+                {
+                  text: "Stop and Send",
+                  onPress: () => {
+                    sendRecordedSound();
+                  },
+                },
+              ],
+              // Prevent the alert from being dismissed by tapping outside
+              { cancelable: false }
+            );
           });
       }
     } catch (err) {
@@ -224,6 +250,13 @@ const CustomActions = ({
       onSend({ audio: soundURL });
     });
   };
+
+  // Ensure the recording object is stopped and unloaded in cases where the user closes the app instead of stopping the recording
+  useEffect(() => {
+    return () => {
+      if (recordingObject) recordingObject.stopAndUnloadAsync();
+    };
+  }, []);
 
   return (
     <TouchableOpacity style={styles.container} onPress={onActionPress}>
