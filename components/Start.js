@@ -17,7 +17,7 @@ import {
 // Firebase Authentication Module
 import { getAuth, signInAnonymously } from "firebase/auth";
 
-// Icon Library
+// Expo Modules
 import { Ionicons } from "@expo/vector-icons";
 
 // Local Assets

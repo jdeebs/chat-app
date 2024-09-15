@@ -12,12 +12,10 @@ import {
 // Firebase Firestore Modules
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
-// All Expo Module functions To Reference As Collective Objects
+// Expo Modules
 import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
 import { Audio } from "expo-av";
-
-// Expo Action Sheet Module
 import { useActionSheet } from "@expo/react-native-action-sheet";
 
 // UUID Library
@@ -32,13 +30,16 @@ const CustomActions = ({
   name,
 }) => {
   const actionSheet = useActionSheet();
-  // let recordingObject = null;
+  let recordingObject = null;
 
-  // Generate a unique reference string for each image uploaded
+  // Generate a unique reference string for each image/sound uploaded
   const generateReference = (uri) => {
+    if (typeof uri !== "string") {
+      throw new TypeError("The uri parameter must be a string.");
+    }
     const timeStamp = new Date().getTime();
-    const imageName = uri.split("/")[uri.split("/").length - 1];
-    return `${userID}-${timeStamp}-${imageName}`;
+    const name = uri.split("/").pop();
+    return `${userID}-${timeStamp}-${name}`;
   };
 
   const onActionPress = () => {
@@ -237,17 +238,25 @@ const CustomActions = ({
   const sendRecordedSound = async () => {
     await stopRecording();
     // Get the URI of the recorded sound
-    const uniqueRefString = generateReference(recordingObject.getURI());
+    const uniqueRefString = generateReference(recordingObject);
     // Create a reference to the storage location
     const newUploadRef = ref(storage, uniqueRefString);
     // Fetch the recorded sound
-    const response = await fetch(recordingObject.getURI());
+    const response = await fetch(recordingObject);
     // Get the sound as a blob to upload to Firebase storage
     const blob = await response.blob();
     // Upload the blob to Firebase storage
     uploadBytes(newUploadRef, blob).then(async (snapshot) => {
       const soundURL = await getDownloadURL(snapshot.ref);
-      onSend({ audio: soundURL });
+      const soundMessage = {
+        _id: uuidv4(),
+        text: "",
+        createdAt: new Date(),
+        user: { _id: userID, name: name },
+        audio: soundURL,
+      };
+      // Send the audio message to the GiftedChat component
+      onSend([soundMessage]);
     });
   };
 

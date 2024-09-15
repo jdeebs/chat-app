@@ -7,6 +7,7 @@ import {
   Platform,
   TouchableOpacity,
   Linking,
+  Text,
 } from "react-native";
 import MapView from "react-native-maps";
 
@@ -19,8 +20,9 @@ import {
   Send,
 } from "react-native-gifted-chat";
 
-// Icon Library
+// Expo Modules
 import { Ionicons } from "@expo/vector-icons";
+import { Audio } from "expo-av";
 
 // Firebase Firestore Modules
 import {
@@ -41,6 +43,7 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
   // Extract userID, name, and background props from the route
   const { userID, name, background } = route.params;
   const [messages, setMessages] = useState([]);
+  let soundObject = null;
 
   // Append new messages to the GiftedChat component using the messages state
   const onSend = (newMessages) => {
@@ -68,6 +71,28 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
           left: styles.timeTextLeft,
         }}
       />
+    );
+  };
+
+  const renderMessageAudio = (props) => {
+    return (
+      <View {...props}>
+        <TouchableOpacity
+          style={{ backgroundColor: "#FF0", borderRadius: 10, margin: 5 }}
+          onPress={async () => {
+            if (soundObject) soundObject.unloadAsync();
+            const { sound } = await Audio.Sound.createAsync({
+              uri: props.currentMessage.audio,
+            });
+            soundObject = sound;
+            await sound.playAsync();
+          }}
+        >
+          <Text style={{ textAlign: "center", color: "black", padding: 5 }}>
+            Play Sound
+          </Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -186,6 +211,7 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
     // Unregister listener to prevent duplicated listeners (memory leaks) when component re-renders
     return () => {
       if (unsubMessages) unsubMessages();
+      if (soundObject) soundObject.unloadAsync();
     };
   }, [isConnected]);
 
@@ -226,6 +252,7 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
       <GiftedChat
         messages={messages}
         renderBubble={renderBubble}
+        renderMessageAudio={renderMessageAudio}
         renderInputToolbar={renderInputToolbar}
         renderDay={renderDay}
         renderSend={renderSend}
@@ -288,9 +315,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   dayText: {
-    color: '#2E282A',
-    fontWeight: '600',
-},
+    color: "#2E282A",
+    fontWeight: "600",
+  },
   sendButtonContainer: {
     justifyContent: "center",
     alignItems: "center",
