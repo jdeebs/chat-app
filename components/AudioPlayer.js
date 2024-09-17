@@ -123,7 +123,7 @@ const AudioPlayer = ({ uri }) => {
       />
       <Text style={styles.timeText}>
         {/* Format the time display */}
-        {Math.floor(position / 60000)}:{Math.floor((position % 60000) / 1000)}
+        {position ? Math.floor(position / 60000) + ":" + Math.floor((position % 60000) / 1000).toString().padStart(2, '0') : "0:00"}
       </Text>
     </View>
   );
@@ -133,22 +133,23 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
   },
   button: {
+    width: 60,
     padding: 10,
-    backgroundColor: "#007BFF",
-    borderRadius: 5,
+    backgroundColor: "#B1B2FF",
+    borderRadius: 10,
   },
   buttonText: {
-    color: "white",
+    fontWeight: "bold",
+    color: "#000",
+    textAlign: "center",
   },
   slider: {
-    width: 200,
-    height: 40,
+    width: 150,
   },
   timeText: {
-    color: "#000",
+    color: "#FFF",
     fontSize: 12,
   },
 });

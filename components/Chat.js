@@ -317,7 +317,6 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     marginRight: 5,
-    // marginBottom: Platform.OS === "ios" ? 0 : 5,
   },
 });
 
