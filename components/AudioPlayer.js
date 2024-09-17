@@ -5,7 +5,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Slider } from "react-native";
 // Expo Modules
 import { Audio } from "expo-av";
 
-const AudioPlayer = ({}) => {
+const AudioPlayer = ({ uri, onPlaybackStatusUpdate }) => {
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isBuffering, setIsBuffering] = useState(false);
@@ -17,24 +17,38 @@ const AudioPlayer = ({}) => {
   // Load sound when component mounts
   useEffect(() => {
     const loadSound = async () => {
-
+      try {
+        // Load the sound from the provided URI
+        const { sound: loadedSound, status } = await Audio.Sound.createAsync(
+          { uri },
+          { shouldPlay: false },
+          onPlaybackStatusUpdate
+        );
+        // Set the sound and duration
+        setSound(loadedSound);
+        soundRef.current = loadedSound;
+        setDuration(status.durationMillis);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error loading sound:", error);
+      }
     };
+    // 
     loadSound();
     return () => {
+    // Unload sound when component unmounts
       if (sound) {
         sound.unloadAsync();
       }
     };
-  });
+  }, [uri]); // Add uri as a dependency
 
   const playPauseHandler = async () => {
     setIsPlaying(!isPlaying);
   };
 
   // Handle playback status updates
-  const onSlidingComplete = async (value) => {
-
-  };
+  const onSlidingComplete = async (value) => {};
 
   return (
     <View style={styles.container}>
@@ -60,27 +74,27 @@ const AudioPlayer = ({}) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: 10,
-    },
-    button: {
-      padding: 10,
-      backgroundColor: '#007BFF',
-      borderRadius: 5,
-    },
-    buttonText: {
-      color: 'white',
-    },
-    slider: {
-      flex: 1,
-      marginHorizontal: 10,
-    },
-    timeText: {
-      color: '#000',
-      fontSize: 12,
-    },
-  });
-  
-  export default AudioPlayer;
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+  },
+  button: {
+    padding: 10,
+    backgroundColor: "#007BFF",
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "white",
+  },
+  slider: {
+    flex: 1,
+    marginHorizontal: 10,
+  },
+  timeText: {
+    color: "#000",
+    fontSize: 12,
+  },
+});
+
+export default AudioPlayer;
