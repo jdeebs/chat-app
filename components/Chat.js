@@ -7,7 +7,6 @@ import {
   Platform,
   TouchableOpacity,
   Linking,
-  Text,
 } from "react-native";
 import MapView from "react-native-maps";
 
@@ -36,8 +35,9 @@ import {
 // Async Storage for Data Caching
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Custom Actions Component
+// Import Components
 import CustomActions from "./CustomActions";
+import AudioPlayer from "./AudioPlayer";
 
 const Chat = ({ db, route, navigation, isConnected, storage }) => {
   // Extract userID, name, and background props from the route
@@ -76,23 +76,9 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
 
   const renderMessageAudio = (props) => {
     return (
-      <View {...props}>
-        <TouchableOpacity
-          style={{ backgroundColor: "#FF0", borderRadius: 10, margin: 5 }}
-          onPress={async () => {
-            if (soundObject) soundObject.unloadAsync();
-            const { sound } = await Audio.Sound.createAsync({
-              uri: props.currentMessage.audio,
-            });
-            soundObject = sound;
-            await sound.playAsync();
-          }}
-        >
-          <Text style={{ textAlign: "center", color: "black", padding: 5 }}>
-            Play Sound
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <View style={{ padding: 5 }}>
+      <AudioPlayer uri={props.currentMessage.audio} />
+    </View>
     );
   };
 

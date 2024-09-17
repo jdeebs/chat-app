@@ -1,11 +1,12 @@
 // React & React Native Core Components & APIs
 import { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Slider } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import Slider from "@react-native-community/slider";
 
 // Expo Modules
 import { Audio } from "expo-av";
 
-const AudioPlayer = ({ uri, onPlaybackStatusUpdate }) => {
+const AudioPlayer = ({ uri }) => {
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isBuffering, setIsBuffering] = useState(false);
@@ -45,17 +46,19 @@ const AudioPlayer = ({ uri, onPlaybackStatusUpdate }) => {
 
   const playPauseHandler = async () => {
     // Play or pause the sound based on the current state
-    if (isPlaying) {
-      await sound.pauseAsync();
-    } else {
-      await sound.playAsync();
+    if (sound) {
+      if (isPlaying) {
+        await sound.pauseAsync();
+      } else {
+        await sound.playAsync();
+      }
+      setIsPlaying(!isPlaying);
     }
-    setIsPlaying(!isPlaying);
   };
 
   const onSlidingComplete = async (value) => {
     // Go to the selected position in the audio
-    if (sound) {
+    if (sound && !isBuffering) {
       await sound.setPositionAsync(value * duration);
     }
 
@@ -76,6 +79,13 @@ const AudioPlayer = ({ uri, onPlaybackStatusUpdate }) => {
       setIsBuffering(false);
     }
   };
+
+  useEffect(() => {
+    // Set slider value when position or duration changes
+    if (sound && duration) {
+      sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    }
+  }, [duration]);
 
   return (
     <View style={styles.container}>
@@ -116,8 +126,9 @@ const styles = StyleSheet.create({
     color: "white",
   },
   slider: {
-    flex: 1,
-    marginHorizontal: 10,
+    flexDirection: "row",
+    width: 150,
+    height: 40,
   },
   timeText: {
     color: "#000",
