@@ -33,10 +33,10 @@ const AudioPlayer = ({ uri, onPlaybackStatusUpdate }) => {
         console.error("Error loading sound:", error);
       }
     };
-    // 
     loadSound();
+
     return () => {
-    // Unload sound when component unmounts
+      // Unload sound when component unmounts
       if (sound) {
         sound.unloadAsync();
       }
@@ -46,9 +46,9 @@ const AudioPlayer = ({ uri, onPlaybackStatusUpdate }) => {
   const playPauseHandler = async () => {
     // Play or pause the sound based on the current state
     if (isPlaying) {
-        await sound.pauseAsync();
+      await sound.pauseAsync();
     } else {
-        await sound.playAsync();
+      await sound.playAsync();
     }
     setIsPlaying(!isPlaying);
   };
@@ -56,7 +56,24 @@ const AudioPlayer = ({ uri, onPlaybackStatusUpdate }) => {
   const onSlidingComplete = async (value) => {
     // Go to the selected position in the audio
     if (sound) {
-        await sound.setPositionAsync(value * duration);
+      await sound.setPositionAsync(value * duration);
+    }
+
+    if (isLoading) {
+      return <Text>Loading...</Text>;
+    }
+  };
+
+  const onPlaybackStatusUpdate = (status) => {
+    // Update playback status based on the current status
+    if (status.isLoaded) {
+      setIsPlaying(status.isPlaying);
+      setPosition(status.positionMillis);
+      setDuration(status.durationMillis);
+      setIsBuffering(status.isBuffering);
+    } else {
+      setIsPlaying(false);
+      setIsBuffering(false);
     }
   };
 
@@ -66,6 +83,7 @@ const AudioPlayer = ({ uri, onPlaybackStatusUpdate }) => {
       <TouchableOpacity style={styles.button} onPress={playPauseHandler}>
         <Text style={styles.buttonText}>{isPlaying ? "Pause" : "Play"}</Text>
       </TouchableOpacity>
+      {/* Slider to control audio position */}
       <Slider
         style={styles.slider}
         minimumValue={0}
