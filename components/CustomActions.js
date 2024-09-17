@@ -30,7 +30,7 @@ const CustomActions = ({
   name,
 }) => {
   const actionSheet = useActionSheet();
-  let recordingObject = null;
+  let soundObject = null;
 
   // Generate a unique reference string for each image/sound uploaded
   const generateReference = (uri) => {
@@ -196,7 +196,7 @@ const CustomActions = ({
           })
           .then((recording) => {
             // Assign the recording object to the variable
-            recordingObject = recording;
+            soundObject = recording;
             // Show an alert to indicate recording is in progress with options to cancel or stop and send
             Alert.alert(
               "You are recording...",
@@ -232,17 +232,18 @@ const CustomActions = ({
       playsInSilentModeIOS: false,
     });
     // Stop and unload the recording object
-    await recordingObject.stopAndUnloadAsync();
+    await soundObject.stopAndUnloadAsync();
   };
 
   const sendRecordedSound = async () => {
     await stopRecording();
     // Get the URI of the recorded sound
-    const uniqueRefString = generateReference(recordingObject);
+    const uri = await soundObject.getURI();
+    const uniqueRefString = generateReference(uri);
     // Create a reference to the storage location
     const newUploadRef = ref(storage, uniqueRefString);
     // Fetch the recorded sound
-    const response = await fetch(recordingObject);
+    const response = await fetch(uri);
     // Get the sound as a blob to upload to Firebase storage
     const blob = await response.blob();
     // Upload the blob to Firebase storage
@@ -263,7 +264,7 @@ const CustomActions = ({
   // Ensure the recording object is stopped and unloaded in cases where the user closes the app instead of stopping the recording
   useEffect(() => {
     return () => {
-      if (recordingObject) recordingObject.stopAndUnloadAsync();
+      if (soundObject) soundObject.stopAndUnloadAsync();
     };
   }, []);
 
