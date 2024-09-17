@@ -44,11 +44,21 @@ const AudioPlayer = ({ uri, onPlaybackStatusUpdate }) => {
   }, [uri]); // Add uri as a dependency
 
   const playPauseHandler = async () => {
+    // Play or pause the sound based on the current state
+    if (isPlaying) {
+        await sound.pauseAsync();
+    } else {
+        await sound.playAsync();
+    }
     setIsPlaying(!isPlaying);
   };
 
-  // Handle playback status updates
-  const onSlidingComplete = async (value) => {};
+  const onSlidingComplete = async (value) => {
+    // Go to the selected position in the audio
+    if (sound) {
+        await sound.setPositionAsync(value * duration);
+    }
+  };
 
   return (
     <View style={styles.container}>
